@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use App\Http\Controllers\FeedbackController;
 
 class Handler extends ExceptionHandler
 {
@@ -50,6 +51,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        return response(FeedbackController::error($exception), 200);
     }
 }

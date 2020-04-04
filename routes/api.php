@@ -18,4 +18,5 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
-Route::post('/test', 'TestController@do');
+//Route::post('/test', 'TestController@do');
+Route::post('/user/create', 'UserController@create');

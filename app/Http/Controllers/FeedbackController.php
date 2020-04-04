@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 //use App\Http\Controllers\Exception\FileCanNotBeStored;
-//use App\Http\Controllers\Exception\WrongRequestInput;
+use App\Http\Controllers\Exception\WrongRequestInput;
 //use App\Plasticine\Collection\Exception\AddAlreadyExistHashException;
 //use App\Plasticine\Collection\Exception\AddWrongTypeException;
 //use App\Plasticine\Import\Json\Exception\InvalidJsonFormat;
@@ -44,11 +44,11 @@ class FeedbackController extends Controller
         return json_encode($feedback);
     }
 
-//    private static function getCodeByException(\Exception $e)
-//    {
-//        // Request
-//        if ($e instanceof WrongRequestInput) {
-//            return '2.1';
+    private static function getCodeByException(\Exception $e)
+    {
+        // Request
+        if ($e instanceof WrongRequestInput) {
+            return '2.1';
 //
 //            // Collection
 //        } elseif ($e instanceof AddAlreadyExistHashException) {
@@ -110,17 +110,17 @@ class FeedbackController extends Controller
 //
 //        } else {
 //            return '0.0';
-//        }
-//
-//    }
-//
-//    /**
-//     * @param \Exception $e
-//     * @return array
-//     */
-//    private static function getNotificationsByException(\Exception $e)
-//    {
-//        if ($e instanceof UserDecisionRequired) return Model::getErrors();
-//        return [];
-//    }
+        }
+
+    }
+
+    /**
+     * @param \Exception $e
+     * @return array
+     */
+    private static function getNotificationsByException(\Exception $e)
+    {
+        if ($e instanceof UserDecisionRequired) return Model::getErrors();
+        return [];
+    }
 }
