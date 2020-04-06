@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,12 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});*/
-
 // USER
 Route::post('/user/create', 'UserController@create');
 Route::post('/user/set', 'UserController@set');
 Route::post('/user/delete', 'UserController@delete');
 Route::post('/user/get', 'UserController@get');
+
+// SETTING
+Route::post('/setting/set', 'SettingController@set');
+Route::post('/setting/get', 'SettingController@get');

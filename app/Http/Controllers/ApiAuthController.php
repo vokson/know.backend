@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\ApiUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FeedbackController As Feedback;
-use App\Http\Controllers\SettingsController As Settings;
+use App\Http\Controllers\SettingController As Settings;
 use Illuminate\Support\Facades\Input;
 
 class ApiAuthController extends Controller

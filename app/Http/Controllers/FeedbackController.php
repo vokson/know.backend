@@ -40,6 +40,18 @@ class FeedbackController extends Controller
             return '2.7';
         } elseif ($e instanceof \App\Exceptions\User\Set\MissedUserWithId) {
             return '2.8';
+
+         // Setting
+        } elseif ($e instanceof \App\Exceptions\Setting\Validation\Items) {
+            return '3.1';
+        } elseif ($e instanceof \App\Exceptions\Setting\Validation\Name) {
+            return '3.2';
+        } elseif ($e instanceof \App\Exceptions\Setting\Validation\Value) {
+            return '3.3';
+        } elseif ($e instanceof \App\Exceptions\Setting\Set\SaveError) {
+            return '3.4';
+
+        // DEFAULT
         } else {
             return '0.0';
         }
