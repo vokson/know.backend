@@ -22,3 +22,7 @@ Route::post('/user/get', 'UserController@get');
 // SETTING
 Route::post('/setting/set', 'SettingController@set');
 Route::post('/setting/get', 'SettingController@get');
+
+// ACTION
+Route::post('/action/set', 'ActionController@set');
+Route::post('/action/get', 'ActionController@get');

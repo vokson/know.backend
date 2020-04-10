@@ -51,6 +51,16 @@ class FeedbackController extends Controller
         } elseif ($e instanceof \App\Exceptions\Setting\Set\SaveError) {
             return '3.4';
 
+            // Action
+        } elseif ($e instanceof \App\Exceptions\Action\Validation\Role) {
+            return '4.1';
+        } elseif ($e instanceof \App\Exceptions\Action\Validation\Name) {
+            return '4.2';
+        } elseif ($e instanceof \App\Exceptions\Action\Validation\State) {
+            return '4.3';
+        } elseif ($e instanceof \App\Exceptions\Action\Set\ActionAlreadyExists) {
+            return '4.4';
+
         // DEFAULT
         } else {
             return '0.0';

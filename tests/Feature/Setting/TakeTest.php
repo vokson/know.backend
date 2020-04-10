@@ -4,8 +4,10 @@ namespace Tests\Feature\Setting;
 
 use App\Http\Controllers\SettingController;
 use App\Setting;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 Use Illuminate\Foundation\Testing\RefreshDatabase;
+
 
 
 class TakeTest extends TestCase

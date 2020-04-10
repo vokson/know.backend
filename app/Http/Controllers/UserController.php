@@ -17,6 +17,7 @@ Use App\Exceptions\User\Set\MissedUserWithId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\FeedbackController As Feedback;
+use App\Http\Controllers\SettingController as Setting;
 
 class UserController extends Controller
 {
@@ -128,9 +129,7 @@ class UserController extends Controller
         throw_if(!is_null($userWithEmail), new NotUniqueEmail());
 
         $user->permission_expression = trim($request->input('permission_expression'));
-        //TODO  $user->password = hash('sha256', Settings::take('DEFAULT_PASSWORD'));
-
-        $user->password = hash('sha256', '1234');
+        $user->password = hash('sha256', Setting::take('DEFAULT_PASSWORD'));
         $user->access_token = uniqid();
         $user->save();
 
@@ -199,13 +198,10 @@ class UserController extends Controller
 //
 //        return Feedback::getFeedback(0);
 //    }
-//
+
 
     public function get(Request $request)
     {
-
-
-
         $active = $request->input('active', '');
 
         $email = $request->input('email', '');
