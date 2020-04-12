@@ -29,7 +29,7 @@ class UserController extends Controller
 //    }
 
 
-    public function validateId($value)
+    public static function validateId($value)
     {
         throw_if(
             is_null($value) || !is_int($value) || $value <= 0,
@@ -39,7 +39,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validateActive($value)
+    public static function validateActive($value)
     {
         throw_if(
             is_null($value) || !is_int($value) || $value < 0 || $value > 1,
@@ -49,7 +49,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validateName($value)
+    public static function validateName($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || strlen(trim($value)) == 0,
@@ -59,7 +59,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validateSurname($value)
+    public static function validateSurname($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || strlen(trim($value)) == 0,
@@ -69,7 +69,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validateRole($value)
+    public static function validateRole($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || $value === '' || strlen(trim($value)) == 0,
@@ -79,7 +79,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validateEmail($value)
+    public static function validateEmail($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || $value === '' || !filter_var($value, FILTER_VALIDATE_EMAIL),
@@ -89,7 +89,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validatePermissionExpression($value)
+    public static function validatePermissionExpression($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || $value === '',
@@ -99,7 +99,7 @@ class UserController extends Controller
         return true;
     }
 
-    public function validatePassword($value)
+    public static function validatePassword($value)
     {
         throw_if(
             is_null($value) || !is_string($value) || strlen($value) < 3,
@@ -111,12 +111,12 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        $this->validateActive($request->input('active'));
-        $this->validateName($request->input('name'));
-        $this->validateSurname($request->input('surname'));
-        $this->validateRole($request->input('role'));
-        $this->validateEmail($request->input('email'));
-        $this->validatePermissionExpression($request->input('permission_expression'));
+        self::validateActive($request->input('active'));
+        self::validateName($request->input('name'));
+        self::validateSurname($request->input('surname'));
+        self::validateRole($request->input('role'));
+        self::validateEmail($request->input('email'));
+        self::validatePermissionExpression($request->input('permission_expression'));
 
         $user = new User();
         $user->active = $request->input('active');
@@ -139,13 +139,13 @@ class UserController extends Controller
     public function set(Request $request)
     {
 
-        $this->validateId($request->input('id'));
-        $this->validateActive($request->input('active'));
-        $this->validateName($request->input('name'));
-        $this->validateSurname($request->input('surname'));
-        $this->validateRole($request->input('role'));
-        $this->validateEmail($request->input('email'));
-        $this->validatePermissionExpression($request->input('permission_expression'));
+        self::validateId($request->input('id'));
+        self::validateActive($request->input('active'));
+        self::validateName($request->input('name'));
+        self::validateSurname($request->input('surname'));
+        self::validateRole($request->input('role'));
+        self::validateEmail($request->input('email'));
+        self::validatePermissionExpression($request->input('permission_expression'));
 
         $user = User::where('id', $request->input('id'))->first();
         throw_if(is_null($user), new MissedUserWithId());
@@ -173,7 +173,7 @@ class UserController extends Controller
     public function delete(Request $request)
     {
 
-        $this->validateId($request->input('id'));
+        self::validateId($request->input('id'));
 
         $user = User::where('id', $request->input('id'))->first();
         throw_if(is_null($user), new MissedUserWithId());

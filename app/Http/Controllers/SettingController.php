@@ -13,26 +13,26 @@ use App\Exceptions\Setting\Validation\Items;
 class SettingController extends Controller
 {
 
-    public function validateString($value)
+    public static function validateString($value)
     {
         return (!is_null($value) && is_string($value) && strlen(trim($value)) > 0);
     }
 
-    public function validateName($value)
+    public static function validateName($value)
     {
-        throw_if(!$this->validateString($value), new Name());
+        throw_if(!self::validateString($value), new Name());
 
         return true;
     }
 
-    public function validateValue($value)
+    public static function validateValue($value)
     {
-        throw_if(!$this->validateString($value), new Value());
+        throw_if(!self::validateString($value), new Value());
 
         return true;
     }
 
-    public function validateItems($value)
+    public static function validateItems($value)
     {
         throw_if(is_null($value) || !is_array($value), new Items());
 
@@ -75,15 +75,15 @@ class SettingController extends Controller
     public function set(Request $request)
     {
         $items = $request->input('items', null);
-        $this->validateItems($items);
+        self::validateItems($items);
 
         foreach ($items as $item) {
 
             $name = array_key_exists('name', $item) ? $item['name'] : null;
             $value = array_key_exists('value', $item) ? $item['value'] : null;
 
-            $this->validateName($name);
-            $this->validateValue($value);
+            self::validateName($name);
+            self::validateValue($value);
 
             throw_if(!self::save($name, $value), new SaveError());
 

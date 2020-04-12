@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\ActionController;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
@@ -12,4 +13,9 @@ class User extends Model
 
     public $timestamps = true;
     protected $dateFormat = 'U';
+
+    public function mayDo(string $nameOfAction)
+    {
+        return ActionController::take($this->role, $nameOfAction);
+    }
 }
