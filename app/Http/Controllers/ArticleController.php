@@ -38,7 +38,7 @@ class ArticleController extends Controller
     public static function validateIsAttachmentExist($value)
     {
         throw_if(
-            is_null($value) || !is_int($value) || $value <= 0,
+            is_null($value) || !is_int($value) || $value < 0 || $value > 1,
             new IsAttachmentExist()
         );
 
