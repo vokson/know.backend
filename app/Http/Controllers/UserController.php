@@ -12,7 +12,7 @@ use App\Exceptions\User\Validation\Password;
 use App\Exceptions\User\Validation\Email;
 use App\Exceptions\User\Validation\PermissionExpression;
 use App\Exceptions\User\Create\NotUniqueEmail;
-Use App\Exceptions\User\Set\MissedUserWithId;
+Use App\Exceptions\User\Set\MissedArticleWithId;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -148,7 +148,7 @@ class UserController extends Controller
         self::validatePermissionExpression($request->input('permission_expression'));
 
         $user = User::where('id', $request->input('id'))->first();
-        throw_if(is_null($user), new MissedUserWithId());
+        throw_if(is_null($user), new MissedArticleWithId());
 
         $user->active = $request->input('active');
         $user->name = trim($request->input('name'));
@@ -176,7 +176,7 @@ class UserController extends Controller
         self::validateId($request->input('id'));
 
         $user = User::where('id', $request->input('id'))->first();
-        throw_if(is_null($user), new MissedUserWithId());
+        throw_if(is_null($user), new MissedArticleWithId());
 
         $user->delete();
 
