@@ -13,6 +13,7 @@ use App\Exceptions\Article\Validation\Subject;
 use App\Exceptions\Article\Validation\Body;
 use App\Exceptions\Article\Validation\IsAttachmentExist;
 use App\Exceptions\Article\Validation\UserId;
+use App\Http\Controllers\FeedbackController as Feedback;
 
 class ArticleController extends Controller
 {
@@ -74,12 +75,17 @@ class ArticleController extends Controller
         self::validateSubject($request->input('subject'));
         self::validateBody($request->input('body'));
 
+
+
         $id = $request->input('id');
         throw_if(!is_null($id) && is_null(Article::where('id', $id)->first()), new MissedArticleWithId());
 
+
+
         $version = 1;
         if (is_null($id)) {
-            $id = Article::max('id') + 1;
+            $max =  Article::max('id');
+            $id = (is_null($max)) ? 1 : $max + 1;
         } else {
             $version = Article::where('id',$id)->max('version');
         }
@@ -89,7 +95,7 @@ class ArticleController extends Controller
         $article->version = $version;
         $article->subject = $request->input('subject');
         $article->body = $request->input('body');
-        $article->user_id = 0; // TODO
+        $article->user_id = AuthController::id($request);
         $article->save();
 
         return Feedback::success();

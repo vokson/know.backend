@@ -2,30 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\ApiUser;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FeedbackController As Feedback;
 use App\Http\Controllers\SettingController As Settings;
 use Illuminate\Support\Facades\Input;
 
-class ApiAuthController extends Controller
+class AuthController extends Controller
 {
 
-    private static function isTokenAlive($timeOfLastVisit)
-    {
-        return (Settings::take('TOKEN_LIFE_TIME') > (time() - $timeOfLastVisit->timestamp));
-    }
+//    private static function isTokenAlive($timeOfLastVisit)
+//    {
+//        return (Settings::take('TOKEN_LIFE_TIME') > (time() - $timeOfLastVisit->timestamp));
+//    }
 
     public static function id(Request $request) {
         $token = $request->input('access_token');
-        $user = ApiUser::where('access_token', $token)->first();
+        $user = User::where('access_token', $token)->first();
         return $user->id;
     }
 
-    public static function getSurnameAndNameOfUserById($id) {
-        $user = ApiUser::find($id);
-        return $user->surname . ' ' . $user->name;
-    }
+//    public static function getSurnameAndNameOfUserById($id) {
+//        $user = User::find($id);
+//        return $user->surname . ' ' . $user->name;
+//    }
 
 
 
