@@ -22,10 +22,10 @@ class AuthController extends Controller
         return $user->id;
     }
 
-//    public static function getSurnameAndNameOfUserById($id) {
-//        $user = User::find($id);
-//        return $user->surname . ' ' . $user->name;
-//    }
+    public static function getSurnameAndNameOfUserById($id) {
+        $user = User::find($id);
+        return $user->surname . ' ' . $user->name;
+    }
 
 
 

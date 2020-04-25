@@ -31,3 +31,5 @@ Route::post('/list/actions', 'ActionController@getListOfActions');
 
 // ARTICLE
 Route::post('/article/set', 'ArticleController@set');
+Route::post('/article/get', 'ArticleController@get');
+Route::post('/article/delete', 'ArticleController@delete');

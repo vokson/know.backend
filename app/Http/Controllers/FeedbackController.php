@@ -58,8 +58,26 @@ class FeedbackController extends Controller
             return '4.2';
         } elseif ($e instanceof \App\Exceptions\Action\Validation\State) {
             return '4.3';
-        } elseif ($e instanceof \App\Exceptions\Action\Set\ActionAlreadyExists) {
-            return '4.4';
+
+            // Article
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Subject) {
+            return '5.1';
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Body) {
+            return '5.2';
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Id) {
+            return '5.3';
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\IsAttachmentExist) {
+            return '5.4';
+        } elseif ($e instanceof \App\Exceptions\Article\Set\MissedArticleWithId) {
+            return '5.5';
+        } elseif ($e instanceof \App\Exceptions\Article\Get\NullArticle) {
+            return '5.6';
+        } elseif ($e instanceof \App\Exceptions\Article\Delete\NullArticle) {
+            return '5.7';
+        } elseif ($e instanceof \App\Exceptions\Article\Delete\VersionIsNotLatest) {
+            return '5.8';
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Version) {
+            return '5.9';
 
         // DEFAULT
         } else {

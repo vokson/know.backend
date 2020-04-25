@@ -4,7 +4,7 @@
 namespace App\Exceptions\Article\Validation;
 
 
-class UserId extends \Exception
+class Owner extends \Exception
 {
 
 }
