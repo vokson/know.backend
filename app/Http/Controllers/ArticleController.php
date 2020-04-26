@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Article;
 use App\Exceptions\Article\Delete\VersionIsNotLatest;
 use App\Exceptions\Article\Set\MissedArticleWithId;
-use App\Exceptions\User\Set\MissedUserWithId;
-use App\User;
-use DemeterChain\A;
 use Illuminate\Http\Request;
 use App\Exceptions\Article\Validation\Id;
 use App\Exceptions\Article\Validation\Subject;
@@ -17,6 +14,7 @@ use App\Exceptions\Article\Validation\Owner;
 use App\Exceptions\Article\Get\NullArticle As GetNullArticle;
 use App\Exceptions\Article\Delete\NullArticle as DeleteNullArticle;
 use App\Http\Controllers\FeedbackController as Feedback;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -154,6 +152,7 @@ class ArticleController extends Controller
         self::validateId($request->input('id'));
         self::validateVersion($request->input('version'));
 
+        
         $id = $request->input('id');
         $version = $request->input('version');
 
@@ -170,37 +169,74 @@ class ArticleController extends Controller
         return Feedback::success();
     }
 
-    public function getListOfArticles(Request $request)
+    public function search(Request $request)
     {
-        self::validateId($request->input('id'));
-        self::validateSubject($request->input('subject'));
-        self::validateBody($request->input('body'));
-        self::validateOwner($request->input('owner'));
+//        self::validateId($request->input('id'));
+//        self::validateSubject($request->input('subject'));
+//        self::validateBody($request->input('body'));
+//        self::validateOwner($request->input('owner'));
 
-        $id = $request->input('id');
-        $version = $request->input('version');
+        $id = trim($request->input('id', ''));
+        $owner = trim($request->input('owner', ''));
+        $subject = trim($request->input('subject', ''));
+        $body = trim($request->input('body', ''));
 
-        throw_if(is_null($id), new Id());
+        [$idUsers, $idNamesUsers] = $this->getNamesUsers($owner);
 
+//        DB::enableQueryLog();
 
-        $article = null;
-        if (is_null($version)) {
-            $article = Article::where('id', $id)->where('version', Article::where('id', $id)->max('version'))->first();
-        } else {
-            $article = Article::where('id', $id)->where('version', $version)->first();
-        }
+        $items = DB::table('articles')
+            ->where('id', 'like', '%' . $id . '%')
+            ->where('body', 'like', '%' . $body . '%')
+            ->where('subject', 'like', '%' . $subject . '%')
+            ->whereIn('owner', $idUsers)
+            ->select(DB::raw('
+                "id",
+                "is_attachment_exist",
+                "user_id" as "owner", 
+                "created_at" as "date",
+                "subject", 
+                max("version") as "version"
+             '))
+            ->groupBy('id')
+            ->orderBy('date', 'desc')
+            ->get();
 
+//        dd(DB::getQueryLog());
 
-        throw_if(is_null($article), new GetNullArticle());
+        // Подменяем id на значения полей из других таблиц
+        $items->transform(function ($item, $key) use ($idNamesUsers) {
+            $item->owner = $idNamesUsers[$item->owner];
+            return $item;
+        });
 
         return Feedback::success([
-            'id' => $article->id,
-            'version' => $article->version,
-            'subject' => $article->subject,
-            'body' => $article->body,
-            'is_attachment_exist' => intval($article->is_attachment_exist),
-            'owner' => AuthController::getSurnameAndNameOfUserById($article->user_id)
+            'items' => $items->toArray(),
         ]);
     }
+
+    private function getNamesUsers($owner)
+    {
+//        DB::enableQueryLog();
+
+        $users = DB::table('users')
+            ->where('name', 'like', '%' . $owner . '%')
+            ->orWhere('surname', 'like', '%' . $owner . '%')
+            ->select('id', 'name', 'surname')
+            ->get();
+
+//        dd(DB::getQueryLog());
+
+        $idUsers = $users->map(function ($item) {
+            return $item->id;
+        });
+
+        $namesUsers = $users->map(function ($item) {
+            return $item->surname . ' ' . $item->name;
+        });
+
+        return [$idUsers, array_combine($idUsers->toArray(), $namesUsers->toArray())];
+    }
+
 
 }

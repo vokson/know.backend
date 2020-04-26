@@ -38,7 +38,7 @@ class FeedbackController extends Controller
             return '2.6';
         } elseif ($e instanceof \App\Exceptions\User\Create\NotUniqueEmail) {
             return '2.7';
-        } elseif ($e instanceof \App\Exceptions\User\Set\MissedArticleWithId) {
+        } elseif ($e instanceof \App\Exceptions\User\Set\MissedUserWithId) {
             return '2.8';
 
          // Setting

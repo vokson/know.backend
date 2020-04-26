@@ -201,29 +201,29 @@ class CreateTest extends TestCase
         $this->assertEquals('2.6', $arr['error']);
     }
 
-    public function testSetUserWithMissedUser()
-    {
-
-        $response = $this->json('POST', '/api/user/set', [
-            'id' => 1,
-            'active' => 1,
-            'name' => 'Alex',
-            'surname' => 'Pupkin',
-            'role' => 'engineer',
-            'email' => 'alex_pupkin@mail.ru',
-            'permission_expression' => '/().*/',
-        ]);
-
-        $this->assertDatabaseMissing('users', [
-            'email' => 'alex_pupkin@mail.ru',
-        ]);
-
-        $this->assertEquals($response->status(), 200);
-        $arr = $response->json();
-
-        $this->assertEquals(0, $arr['success']);
-        $this->assertEquals('2.8', $arr['error']);
-    }
+//    public function testSetUserWithMissedUser()
+//    {
+//
+//        $response = $this->json('POST', '/api/user/set', [
+//            'id' => 1,
+//            'active' => 1,
+//            'name' => 'Alex',
+//            'surname' => 'Pupkin',
+//            'role' => 'engineer',
+//            'email' => 'alex_pupkin@mail.ru',
+//            'permission_expression' => '/().*/',
+//        ]);
+//
+//        $this->assertDatabaseMissing('users', [
+//            'email' => 'alex_pupkin@mail.ru',
+//        ]);
+//
+//        $this->assertEquals($response->status(), 200);
+//        $arr = $response->json();
+//
+//        $this->assertEquals(0, $arr['success']);
+//        $this->assertEquals('2.8', $arr['error']);
+//    }
 
 
 }
