@@ -34,3 +34,8 @@ Route::post('/article/set', 'ArticleController@set');
 Route::post('/article/get', 'ArticleController@get');
 Route::post('/article/delete', 'ArticleController@delete');
 Route::post('/article/search', 'ArticleController@search');
+
+// TAG
+Route::post('/tag/create', 'TagController@create');
+Route::post('/tag/delete', 'TagController@delete');
+Route::post('/tag/list', 'TagController@list');

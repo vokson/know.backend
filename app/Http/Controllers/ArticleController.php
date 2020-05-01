@@ -38,29 +38,6 @@ class ArticleController extends Controller
         return true;
     }
 
-//    public static function validateUserId($value)
-//    {
-//
-//        throw_if(
-//            is_null($value) || !is_int($value) || $value <= 0,
-//            new UserId()
-//        );
-//
-//        throw_if(is_null(User::find($value)), new UserId());
-//
-//        return true;
-//    }
-
-//    public static function validateIsAttachmentExist($value)
-//    {
-//        throw_if(
-//            is_null($value) || !is_int($value) || $value < 0 || $value > 1,
-//            new IsAttachmentExist()
-//        );
-//
-//        return true;
-//    }
-
     public static function validateString($value)
     {
         return (!is_null($value) && is_string($value) && strlen(trim($value)) > 0);
@@ -152,7 +129,7 @@ class ArticleController extends Controller
         self::validateId($request->input('id'));
         self::validateVersion($request->input('version'));
 
-        
+
         $id = $request->input('id');
         $version = $request->input('version');
 
@@ -169,12 +146,7 @@ class ArticleController extends Controller
         return Feedback::success();
     }
 
-    public function search(Request $request)
-    {
-//        self::validateId($request->input('id'));
-//        self::validateSubject($request->input('subject'));
-//        self::validateBody($request->input('body'));
-//        self::validateOwner($request->input('owner'));
+    public function search(Request $request) {
 
         $id = trim($request->input('id', ''));
         $owner = trim($request->input('owner', ''));
