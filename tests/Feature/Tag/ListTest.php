@@ -21,6 +21,10 @@ class ListTest extends TestCase
             'name' =>'TAG_2'
         ]);
 
+        $response = $this->json('POST', '/api/tag/create', [
+            'name' =>'TAG_1'
+        ]);
+
         $this->assertDatabaseHas('tags', [
             'name' => 'TAG_1'
         ]);

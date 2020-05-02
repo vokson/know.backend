@@ -79,6 +79,16 @@ class FeedbackController extends Controller
         } elseif ($e instanceof \App\Exceptions\Article\Validation\Version) {
             return '5.9';
 
+            // Tag
+        } elseif ($e instanceof \App\Exceptions\Tag\Validation\Id) {
+            return '6.1';
+        } elseif ($e instanceof \App\Exceptions\Tag\Validation\Name) {
+            return '6.2';
+        } elseif ($e instanceof \App\Exceptions\Tag\Add\MissedArticleWithId) {
+            return '6.3';
+        } elseif ($e instanceof \App\Exceptions\Tag\Add\NameHasNotCreated) {
+            return '6.4';
+
         // DEFAULT
         } else {
             return '0.0';
