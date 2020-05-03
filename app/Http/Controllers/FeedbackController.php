@@ -17,14 +17,24 @@ class FeedbackController extends Controller
         $feedback['success'] = 0;
         $feedback['error'] = self::getCodeByException($e);
         $feedback['description'] = $e->getMessage();
-        $feedback['notifications'] = self::getNotificationsByException($e);
+//        $feedback['notifications'] = self::getNotificationsByException($e);
         return json_encode($feedback);
     }
 
     private static function getCodeByException(\Exception $e)
     {
+        //Auth
+        if ($e instanceof \App\Exceptions\User\Login\InvalidLoginPassword) {
+            return '1.1';
+        } elseif ($e instanceof \App\Exceptions\User\Login\UserSwitchedOff) {
+            return '1.2';
+        } elseif ($e instanceof \App\Exceptions\User\Login\InvalidToken) {
+            return '1.3';
+        } elseif ($e instanceof \App\Exceptions\User\Login\DeadToken) {
+            return '1.4';
+
         // User
-        if ($e instanceof \App\Exceptions\User\Validation\Active) {
+        } elseif ($e instanceof \App\Exceptions\User\Validation\Active) {
             return '2.1';
         } elseif ($e instanceof \App\Exceptions\User\Validation\Email) {
             return '2.2';
@@ -40,6 +50,7 @@ class FeedbackController extends Controller
             return '2.7';
         } elseif ($e instanceof \App\Exceptions\User\Set\MissedUserWithId) {
             return '2.8';
+
 
          // Setting
         } elseif ($e instanceof \App\Exceptions\Setting\Validation\Items) {
@@ -96,13 +107,13 @@ class FeedbackController extends Controller
 
     }
 
-    /**
-     * @param \Exception $e
-     * @return array
-     */
-    private static function getNotificationsByException(\Exception $e)
-    {
-        if ($e instanceof UserDecisionRequired) return Model::getErrors();
-        return [];
-    }
+//    /**
+//     * @param \Exception $e
+//     * @return array
+////     */
+//    private static function getNotificationsByException(\Exception $e)
+//    {
+//        if ($e instanceof UserDecisionRequired) return Model::getErrors();
+//        return [];
+//    }
 }

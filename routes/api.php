@@ -13,11 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// AUTH
+Route::post('/user/login', 'AuthController@login');
+Route::post('/user/login/token', 'AuthController@loginByToken');
+
 // USER
 Route::post('/user/create', 'UserController@create');
 Route::post('/user/set', 'UserController@set');
 Route::post('/user/delete', 'UserController@delete');
 Route::post('/user/get', 'UserController@get');
+Route::post('/user/change/password', 'UserController@changePassword');
+Route::post('/user/set/default/password', 'UserController@setDefaultPasswordToUserWithId');
 
 // SETTING
 Route::post('/setting/set', 'SettingController@set');

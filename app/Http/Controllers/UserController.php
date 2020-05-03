@@ -22,13 +22,6 @@ use App\Http\Controllers\SettingController as Setting;
 class UserController extends Controller
 {
 
-//    public static function getUserId(Request $request) {
-//        $token = $request->input('access_token');
-//        $user = ApiUser::where('access_token', $token)->first();
-//        return $user->id;
-//    }
-
-
     public static function validateId($value)
     {
         throw_if(
@@ -130,7 +123,7 @@ class UserController extends Controller
 
         $user->permission_expression = trim($request->input('permission_expression'));
         $user->password = hash('sha256', Setting::take('DEFAULT_PASSWORD'));
-        $user->access_token = uniqid();
+        $user->access_token = bin2hex(random_bytes(30));
         $user->save();
 
         return Feedback::success();
@@ -183,21 +176,19 @@ class UserController extends Controller
         return Feedback::success();
     }
 
-//
-//    public function setDefaultPassword()
-//    {
-//        $id = Input::get('id', null);
-//
-//        if (!ApiUser::where('id', '=', $id)->exists()) {
-//            return Feedback::getFeedback(501);
-//        }
-//
-//        $user = ApiUser::find($id);
-//        $user->password = hash('sha256', Settings::take('DEFAULT_PASSWORD'));
-//        $user->save();
-//
-//        return Feedback::getFeedback(0);
-//    }
+
+    public function setDefaultPasswordToUserWithId(Request $request)
+    {
+        self::validateId($request->input('id'));
+
+        $user = User::where('id', $request->input('id'))->first();
+        throw_if(is_null($user), new MissedUserWithId());
+
+        $user->password = hash('sha256', Settings::take('DEFAULT_PASSWORD'));
+        $user->save();
+
+        return Feedback::success();
+    }
 
 
     public function get(Request $request)
@@ -230,11 +221,13 @@ class UserController extends Controller
 
     public function changePassword(Request $request)
     {
-       //TODO
-    }
+        self::validatePassword($request->input('password'), '');
 
-    public function setDefaultPassword() {
-        // TODO
+        $user = User::find(AuthController::currentUsedId());
+        $user->password = $request->input('password');
+        $user->save();
+
+        return Feedback::success();
     }
 
 }
