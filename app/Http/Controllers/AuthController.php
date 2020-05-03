@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\User\Login\InvalidLoginPassword;
 use App\Exceptions\User\Login\InvalidToken;
 use App\Exceptions\User\Login\UserSwitchedOff;
+use App\Exceptions\User\Login\DeadToken;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FeedbackController As Feedback;
@@ -13,11 +14,10 @@ use App\Http\Controllers\SettingController As Settings;
 class AuthController extends Controller
 {
 
-    private static $authenticatedUserId = null;
-
-    public static function currentUsedId()
+    public static function currentUsedId(string $token)
     {
-        return self::$authenticatedUserId;
+        $user = User::where('access_token', $token)->first();
+        return $user->id;
     }
 
     private static function isTokenAlive($timeOfLastVisit)
@@ -67,7 +67,6 @@ class AuthController extends Controller
 
     }
 
-
     public function loginByToken(Request $request)
     {
         $token = $request->input('access_token', '');
@@ -75,14 +74,8 @@ class AuthController extends Controller
 
         $user = User::where('access_token', $token)->first();
         throw_if(is_null($user), new InvalidToken());
-        echo 'HERE1';
         throw_if(!$user->active, new UserSwitchedOff());
-        echo 'HERE2';
-        var_dump(!self::isTokenAlive($user->updated_at));
         throw_if(!self::isTokenAlive($user->updated_at), new DeadToken());
-        echo 'HERE3';
-
-        self::$authenticatedUserId = $user->id;
 
         return Feedback::success([
             'access_token' => $user->access_token,
@@ -106,8 +99,6 @@ class AuthController extends Controller
         throw_if(is_null($user), new InvalidToken());
         throw_if(!$user->active, new UserSwitchedOff());
         throw_if(!self::isTokenAlive($user->updated_at), new DeadToken());
-
-        self::$authenticatedUserId = $user->id;
 
         return Feedback::success();
 

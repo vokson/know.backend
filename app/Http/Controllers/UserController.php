@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\FeedbackController As Feedback;
 use App\Http\Controllers\SettingController as Setting;
+use App\Http\Controllers\AuthController;
 
 class UserController extends Controller
 {
@@ -180,11 +181,12 @@ class UserController extends Controller
     public function setDefaultPasswordToUserWithId(Request $request)
     {
         self::validateId($request->input('id'));
+        $id = (int) $request->input('id');
 
-        $user = User::where('id', $request->input('id'))->first();
+        $user = User::find($id);
         throw_if(is_null($user), new MissedUserWithId());
 
-        $user->password = hash('sha256', Settings::take('DEFAULT_PASSWORD'));
+        $user->password = hash('sha256', Setting::take('DEFAULT_PASSWORD'));
         $user->save();
 
         return Feedback::success();
@@ -221,9 +223,10 @@ class UserController extends Controller
 
     public function changePassword(Request $request)
     {
+        $token = $request->input('access_token', '');
         self::validatePassword($request->input('password'), '');
 
-        $user = User::find(AuthController::currentUsedId());
+        $user = User::find(AuthController::currentUsedId($token));
         $user->password = $request->input('password');
         $user->save();
 
