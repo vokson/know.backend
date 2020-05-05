@@ -17,6 +17,8 @@ class AuthController extends Controller
     public static function currentUsedId(string $token)
     {
         $user = User::where('access_token', $token)->first();
+        throw_if(is_null($user), new InvalidToken());
+
         return $user->id;
     }
 

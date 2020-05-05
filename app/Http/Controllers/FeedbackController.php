@@ -32,6 +32,8 @@ class FeedbackController extends Controller
             return '1.3';
         } elseif ($e instanceof \App\Exceptions\User\Login\DeadToken) {
             return '1.4';
+        } elseif ($e instanceof \App\Exceptions\User\Permission\RouteAccessDenied) {
+            return '1.5';
 
         // User
         } elseif ($e instanceof \App\Exceptions\User\Validation\Active) {
