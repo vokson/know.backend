@@ -163,6 +163,15 @@ class LoginTest extends TestCase
         $user->active = 1;
         $user->save();
 
+        $response = $this->json('POST', '/api/user/is/token/valid', [
+            'access_token' => $correctToken
+        ]);
+
+        $this->assertEquals($response->status(), 200);
+        $arr = $response->json();
+        $this->assertEquals(0, $arr['success']);
+        $this->assertEquals('1.4', $arr['error']);
+
         $response = $this->json('POST', '/api/user/login/token', [
             'access_token' => $correctToken
         ]);

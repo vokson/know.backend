@@ -65,7 +65,6 @@ class AuthController extends Controller
                 (hash('sha256', Settings::take('DEFAULT_PASSWORD')) === $user->password)
         ]);
 
-        self::$authenticatedUserId = $user->id;
 
     }
 

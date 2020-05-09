@@ -61,7 +61,7 @@ class FeedbackController extends Controller
             return '3.2';
         } elseif ($e instanceof \App\Exceptions\Setting\Validation\Value) {
             return '3.3';
-        } elseif ($e instanceof \App\Exceptions\Setting\Set\SaveError) {
+        } elseif ($e instanceof \App\Exceptions\Setting\Set\MissedName) {
             return '3.4';
 
             // Action

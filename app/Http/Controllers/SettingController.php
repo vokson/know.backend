@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Setting\Set\SaveError;
+use App\Exceptions\Setting\Set\MissedName;
 use Illuminate\Http\Request;
 use App\Setting;
 use App\Http\Controllers\FeedbackController As Feedback;
@@ -85,7 +85,7 @@ class SettingController extends Controller
             self::validateName($name);
             self::validateValue($value);
 
-            throw_if(!self::save($name, $value), new SaveError());
+            throw_if(!self::save($name, $value), new MissedName());
 
         }
 

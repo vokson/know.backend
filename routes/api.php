@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 // AUTH
 Route::post('/user/login', 'AuthController@login');
 Route::post('/user/login/token', 'AuthController@loginByToken');
+Route::post('/user/is/token/valid', 'AuthController@isTokenValid');
 
 // USER
 Route::post('/user/create', 'UserController@create');
