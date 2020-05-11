@@ -26,7 +26,7 @@ class UserController extends Controller
     public static function validateId($value)
     {
         throw_if(
-            is_null($value) || !is_int($value) || $value <= 0,
+            is_null($value) || !ctype_digit($value) || $value <= 0,
             new Id()
         );
 
@@ -36,7 +36,7 @@ class UserController extends Controller
     public static function validateActive($value)
     {
         throw_if(
-            is_null($value) || !is_int($value) || $value < 0 || $value > 1,
+            is_null($value) || !ctype_digit($value) || $value < 0 || $value > 1,
             new Active()
         );
 
@@ -132,6 +132,7 @@ class UserController extends Controller
 
     public function set(Request $request)
     {
+
 
         self::validateId($request->input('id'));
         self::validateActive($request->input('active'));

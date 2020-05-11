@@ -48,3 +48,6 @@ Route::post('/tag/delete', 'TagController@delete');
 Route::post('/tag/list', 'TagController@list');
 Route::post('/tag/remove', 'TagController@remove');
 Route::post('/tag/add', 'TagController@add');
+
+//SERVICE
+Route::post('/service/database/backup', 'ServiceController@getDatabaseBackup');
