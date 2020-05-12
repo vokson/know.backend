@@ -23,30 +23,30 @@ class ActiveValidationTest extends TestCase
 
     public function testValidateActive_1()
     {
-        $this->assertTrue(self::$controller->validateActive(0), true);
+        $this->assertTrue(self::$controller->validateActive('0'), true);
     }
 
     public function testValidateActive_2()
     {
-        $this->assertTrue(self::$controller->validateActive(1), true);
+        $this->assertTrue(self::$controller->validateActive('1'), true);
     }
 
     public function testValidateActive_3()
     {
         $this->expectException(Active::class);
-        self::$controller->validateActive(-1);
+        self::$controller->validateActive('-1');
     }
 
     public function testValidateActive_4()
     {
         $this->expectException(Active::class);
-        self::$controller->validateActive(2);
+        self::$controller->validateActive('2');
     }
 
     public function testValidateActive_5()
     {
         $this->expectException(Active::class);
-        self::$controller->validateActive('0');
+        self::$controller->validateActive(0);
     }
 
     public function testValidateActive_6()

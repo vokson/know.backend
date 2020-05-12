@@ -23,19 +23,19 @@ class IdValidationTest extends TestCase
 
     public function testValidateId_1()
     {
-        $this->assertTrue(self::$controller->validateId(1), true);
+        $this->assertTrue(self::$controller->validateId('1'), true);
     }
 
     public function testValidateId_2()
     {
         $this->expectException(Id::class);
-        self::$controller->validateId(0);
+        self::$controller->validateId('0');
     }
 
     public function testValidateId_3()
     {
         $this->expectException(Id::class);
-        self::$controller->validateId('0');
+        self::$controller->validateId(0);
     }
 
     public function testValidateId_4()

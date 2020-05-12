@@ -132,8 +132,6 @@ class UserController extends Controller
 
     public function set(Request $request)
     {
-
-
         self::validateId($request->input('id'));
         self::validateActive($request->input('active'));
         self::validateName($request->input('name'));
