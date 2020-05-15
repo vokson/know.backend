@@ -71,6 +71,8 @@ class FeedbackController extends Controller
             return '4.2';
         } elseif ($e instanceof \App\Exceptions\Action\Validation\State) {
             return '4.3';
+        } elseif ($e instanceof \App\Exceptions\Action\Validation\Items) {
+            return '4.4';
 
             // Article
         } elseif ($e instanceof \App\Exceptions\Article\Validation\Subject) {

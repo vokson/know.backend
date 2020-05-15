@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\FeedbackController As Feedback;
 use App\Http\Controllers\SettingController as Setting;
-use App\Http\Controllers\AuthController;
 
 class UserController extends Controller
 {
@@ -230,6 +229,22 @@ class UserController extends Controller
         $user->save();
 
         return Feedback::success();
+    }
+
+    public static function getListOfRoles() {
+
+        $roleList = DB::table('users')
+            ->whereNotNull('role')
+            ->groupBy('role')
+            ->select(['role'])
+            ->orderBy('role')
+            ->get();
+
+        $func = function ($item) {
+            return $item->role;
+        };
+
+        return array_map($func, $roleList->toArray());
     }
 
 }
