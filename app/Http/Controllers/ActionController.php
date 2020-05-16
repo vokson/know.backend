@@ -61,8 +61,6 @@ class ActionController extends Controller
 
     public function get(Request $request)
     {
-
-
         $actionList = DB::table('actions')
             ->whereNull('role')
             ->groupBy('name')
@@ -91,70 +89,8 @@ class ActionController extends Controller
 
     }
 
-//    public function get(Request $request)
-//    {
-//        $items = DB::table('actions')
-//            ->whereNotNull('role')
-//            ->select(['name', 'role'])
-//            ->get();
-//
-//        return Feedback::success([
-//            'items' => $items->toArray(),
-//        ]);
-//
-//    }
-
-    public function getListOfRoles(Request $request)
-    {
-        $items = DB::table('actions')
-            ->whereNotNull('role')
-            ->groupBy('role')
-            ->select(['role'])
-            ->orderBy('role')
-            ->get();
-
-
-        $func = function ($item) {
-            return $item->role;
-        };
-
-
-        return Feedback::success([
-            'items' => array_map($func, $items->toArray()),
-        ]);
-
-    }
-
-    public function getListOfActions(Request $request)
-    {
-        $items = DB::table('actions')
-            ->whereNotNull('name')
-            ->groupBy('name')
-            ->select(['name'])
-            ->orderBy('name')
-            ->get();
-
-        $func = function ($item) {
-            return $item->name;
-        };
-
-        return Feedback::success([
-            'items' => array_map($func, $items->toArray()),
-        ]);
-
-    }
-
     public function set(Request $request)
     {
-//        $state = $request->input('state', null);
-//        $role = $request->input('role', null);
-//        $name = $request->input('name', null);
-//
-//        self::validateState($state);
-//        self::validateRole($role);
-//        self::validateName($name);
-
-
         $items = $request->input('items', null);
         self::validateItems($items);
 
@@ -162,11 +98,6 @@ class ActionController extends Controller
         try {
             foreach ($items as $name => $roles) {
                 self::validateName($name);
-
-//                return Feedback::success([
-////                    'name' => $name,
-////                    'roles' => $roles
-////                ]);
 
                 foreach ($roles as $role => $state) {
 

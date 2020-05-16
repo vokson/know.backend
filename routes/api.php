@@ -33,8 +33,6 @@ Route::post('/setting/get', 'SettingController@get');
 // ACTION
 Route::post('/action/set', 'ActionController@set');
 Route::post('/action/get', 'ActionController@get');
-Route::post('/list/roles', 'ActionController@getListOfRoles');
-Route::post('/list/actions', 'ActionController@getListOfActions');
 
 // ARTICLE
 Route::post('/article/set', 'ArticleController@set');

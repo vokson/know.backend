@@ -82,6 +82,11 @@ class ArticleController extends Controller
             $version = intval(Article::where('id', $id)->max('version')) + 1;
         }
 
+//        return Feedback::success([
+//            'id' => $id,
+//            'version' => $version
+//        ]);
+
         $article = new Article();
         $article->id = $id;
         $article->version = $version;
@@ -90,7 +95,10 @@ class ArticleController extends Controller
         $article->user_id = AuthController::id($request);
         $article->save();
 
-        return Feedback::success();
+        return Feedback::success([
+            'id' => $article->id,
+            'version' => $article->version
+        ]);
     }
 
     public function get(Request $request)
