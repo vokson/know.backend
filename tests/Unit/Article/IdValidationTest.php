@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Article;
 
-use App\Exceptions\Article\Validation\Id;
+use App\Exceptions\Article\Validation\Uin;
 use App\Http\Controllers\ArticleController;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +32,7 @@ class IdValidationTest extends TestCase
 
     public function test_2()
     {
-        $this->expectException(Id::class);
+        $this->expectException(Uin::class);
 
         $f = self::$functionName;
         self::$controller->$f(0);
@@ -40,7 +40,7 @@ class IdValidationTest extends TestCase
 
     public function test_3()
     {
-        $this->expectException(Id::class);
+        $this->expectException(Uin::class);
         $f = self::$functionName;
         self::$controller->$f('0');
     }

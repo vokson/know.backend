@@ -79,7 +79,7 @@ class FeedbackController extends Controller
             return '5.1';
         } elseif ($e instanceof \App\Exceptions\Article\Validation\Body) {
             return '5.2';
-        } elseif ($e instanceof \App\Exceptions\Article\Validation\Id) {
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Uin) {
             return '5.3';
         } elseif ($e instanceof \App\Exceptions\Article\Validation\IsAttachmentExist) {
             return '5.4';

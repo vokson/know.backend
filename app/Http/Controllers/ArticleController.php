@@ -6,7 +6,7 @@ use App\Article;
 use App\Exceptions\Article\Delete\VersionIsNotLatest;
 use App\Exceptions\Article\Set\MissedArticleWithId;
 use Illuminate\Http\Request;
-use App\Exceptions\Article\Validation\Id;
+use App\Exceptions\Article\Validation\Uin;
 use App\Exceptions\Article\Validation\Subject;
 use App\Exceptions\Article\Validation\Body;
 use App\Exceptions\Article\Validation\Version;
@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
-    public static function validateId($value)
+    public static function validateUin($value)
     {
         throw_if(
-            !(is_null($value) || (is_int($value) && $value > 0)),
-            new Id()
+            !(is_null($value) || ((ctype_digit($value) || is_int($value)) && $value > 0)),
+            new Uin()
         );
 
         return true;
@@ -31,7 +31,7 @@ class ArticleController extends Controller
     public static function validateVersion($value)
     {
         throw_if(
-            !(is_null($value) || (is_int($value) && $value > 0)),
+            !(is_null($value) || ((ctype_digit($value) || is_int($value)) && $value > 0)),
             new Version()
         );
 
@@ -66,29 +66,31 @@ class ArticleController extends Controller
 
     public function set(Request $request)
     {
-        self::validateId($request->input('id'));
+        self::validateUin($request->input('uin'));
         self::validateSubject($request->input('subject'));
         self::validateBody($request->input('body'));
 
-        $id = $request->input('id');
-        throw_if(!is_null($id) && is_null(Article::where('id', $id)->first()), new MissedArticleWithId());
+        $uin = $request->input('uin');
+        $uin = (is_null($uin)) ? $uin : intval($uin);
+
+        throw_if(!is_null($uin) && is_null(Article::where('uin', $uin)->first()), new MissedArticleWithId());
 
         $version = 1;
 
-        if (is_null($id)) {
-            $max = Article::max('id');
-            $id = (is_null($max)) ? 1 : $max + 1;
+        if (is_null($uin)) {
+            $max = Article::max('uin');
+            $uin = (is_null($max)) ? 1 : $max + 1;
         } else {
-            $version = intval(Article::where('id', $id)->max('version')) + 1;
+            $version = intval(Article::where('uin', $uin)->max('version')) + 1;
         }
 
 //        return Feedback::success([
-//            'id' => $id,
+//            'uin' => $uin,
 //            'version' => $version
 //        ]);
 
         $article = new Article();
-        $article->id = $id;
+        $article->uin = $uin;
         $article->version = $version;
         $article->subject = $request->input('subject');
         $article->body = $request->input('body');
@@ -96,34 +98,37 @@ class ArticleController extends Controller
         $article->save();
 
         return Feedback::success([
-            'id' => $article->id,
+            'uin' => $article->uin,
             'version' => $article->version
         ]);
     }
 
     public function get(Request $request)
     {
-        self::validateId($request->input('id'));
+        self::validateUin($request->input('uin'));
         self::validateVersion($request->input('version'));
 
-        $id = $request->input('id');
-        $version = $request->input('version');
+        $uin = $request->input('uin');
+        $uin = (is_null($uin)) ? $uin : intval($uin);
 
-        throw_if(is_null($id), new Id());
+        $version = $request->input('version');
+        $version = (is_null($version)) ? $version : intval($version);
+
+        throw_if(is_null($uin), new Uin());
 
 
         $article = null;
         if (is_null($version)) {
-            $article = Article::where('id', $id)->where('version', Article::where('id', $id)->max('version'))->first();
+            $article = Article::where('uin', $uin)->where('version', Article::where('uin', $uin)->max('version'))->first();
         } else {
-            $article = Article::where('id', $id)->where('version', $version)->first();
+            $article = Article::where('uin', $uin)->where('version', $version)->first();
         }
 
 
         throw_if(is_null($article), new GetNullArticle());
 
         return Feedback::success([
-            'id' => $article->id,
+            'uin' => $article->uin,
             'version' => $article->version,
             'subject' => $article->subject,
             'body' => $article->body,
@@ -134,29 +139,30 @@ class ArticleController extends Controller
 
     public function delete(Request $request)
     {
-        self::validateId($request->input('id'));
+        self::validateUin($request->input('uin'));
         self::validateVersion($request->input('version'));
 
 
-        $id = $request->input('id');
-        $version = $request->input('version');
+        $uin = intval($request->input('uin'));
+        $version = intval($request->input('version'));
 
-        throw_if(is_null($id), new Id());
+        throw_if(is_null($uin), new Uin());
         throw_if(is_null($version), new Version());
 
-        $article = Article::where('id', $id)->where('version', $version)->first();
+        $article = Article::where('uin', $uin)->where('version', $version)->first();
 
         throw_if(is_null($article), new DeleteNullArticle());
-        throw_if($version != Article::where('id', $id)->max('version'), new VersionIsNotLatest());
+        throw_if($version != Article::where('uin', $uin)->max('version'), new VersionIsNotLatest());
 
-        Article::where('id', $id)->where('version', $version)->delete();
+        Article::where('uin', $uin)->where('version', $version)->delete();
 
         return Feedback::success();
     }
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
 
-        $id = trim($request->input('id', ''));
+        $uin = trim($request->input('uin', ''));
         $owner = trim($request->input('owner', ''));
         $subject = trim($request->input('subject', ''));
         $body = trim($request->input('body', ''));
@@ -166,25 +172,25 @@ class ArticleController extends Controller
 //        DB::enableQueryLog();
 
         $items = DB::table('articles')
-            ->where('id', 'like', '%' . $id . '%')
+            ->where('uin', 'like', '%' . $uin . '%')
             ->where('body', 'like', '%' . $body . '%')
             ->where('subject', 'like', '%' . $subject . '%')
             ->whereIn('owner', $idUsers)
             ->select(DB::raw('
-                "id",
+                "uin",
                 "is_attachment_exist",
                 "user_id" as "owner", 
                 "created_at" as "date",
                 "subject", 
                 max("version") as "version"
              '))
-            ->groupBy('id')
+            ->groupBy('uin')
             ->orderBy('date', 'desc')
             ->get();
 
 //        dd(DB::getQueryLog());
 
-        // Подменяем id на значения полей из других таблиц
+        // Подменяем uin на значения полей из других таблиц
         $items->transform(function ($item, $key) use ($idNamesUsers) {
             $item->owner = $idNamesUsers[$item->owner];
             return $item;
