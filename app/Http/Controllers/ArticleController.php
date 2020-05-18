@@ -116,6 +116,7 @@ class ArticleController extends Controller
 
         throw_if(is_null($uin), new Uin());
 
+        $maxVersion =  Article::where('uin', $uin)->max('version');
 
         $article = null;
         if (is_null($version)) {
@@ -130,10 +131,12 @@ class ArticleController extends Controller
         return Feedback::success([
             'uin' => $article->uin,
             'version' => $article->version,
+            'max_version' => $maxVersion,
             'subject' => $article->subject,
             'body' => $article->body,
             'is_attachment_exist' => intval($article->is_attachment_exist),
-            'owner' => AuthController::getSurnameAndNameOfUserById($article->user_id)
+            'owner' => AuthController::getSurnameAndNameOfUserById($article->user_id),
+            'date' => $article->updated_at->getTimestamp(),
         ]);
     }
 
