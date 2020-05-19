@@ -37,7 +37,7 @@ class TagController extends Controller
 
     public function list(Request $request)
     {
-        $tags = Tag::whereNull('article_id')->get()->toArray();
+        $tags = Tag::whereNull('article_id')->orderBy('name', 'asc')->get()->toArray();
         $tags = array_column($tags, 'name');
 
         return Feedback::success([
