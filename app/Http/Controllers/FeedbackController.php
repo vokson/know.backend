@@ -103,6 +103,8 @@ class FeedbackController extends Controller
             return '6.3';
         } elseif ($e instanceof \App\Exceptions\Tag\Add\NameHasNotCreated) {
             return '6.4';
+        } elseif ($e instanceof \App\Exceptions\Tag\Validation\Items) {
+            return '6.5';
 
         // DEFAULT
         } else {

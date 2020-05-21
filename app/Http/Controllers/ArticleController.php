@@ -164,7 +164,6 @@ class ArticleController extends Controller
 
     public function search(Request $request)
     {
-
         $uin = trim($request->input('uin', ''));
         $owner = trim($request->input('owner', ''));
         $subject = trim($request->input('subject', ''));
@@ -185,6 +184,7 @@ class ArticleController extends Controller
                 "user_id" as "owner", 
                 "created_at" as "date",
                 "subject", 
+                "body",
                 max("version") as "version"
              '))
             ->groupBy('uin')
