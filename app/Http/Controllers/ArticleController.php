@@ -10,11 +10,12 @@ use App\Exceptions\Article\Validation\Uin;
 use App\Exceptions\Article\Validation\Subject;
 use App\Exceptions\Article\Validation\Body;
 use App\Exceptions\Article\Validation\Version;
-use App\Exceptions\Article\Validation\Owner;
+use App\Exceptions\Article\Validation\Query;
 use App\Exceptions\Article\Get\NullArticle As GetNullArticle;
 use App\Exceptions\Article\Delete\NullArticle as DeleteNullArticle;
 use App\Http\Controllers\FeedbackController as Feedback;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class ArticleController extends Controller
 {
@@ -57,9 +58,9 @@ class ArticleController extends Controller
         return true;
     }
 
-    public static function validateOwner($value)
+    public static function validateQuery($value)
     {
-        throw_if(!self::validateString($value), new Owner());
+        throw_if(!self::validateString($value), new Query());
 
         return true;
     }
@@ -116,7 +117,7 @@ class ArticleController extends Controller
 
         throw_if(is_null($uin), new Uin());
 
-        $maxVersion =  Article::where('uin', $uin)->max('version');
+        $maxVersion = Article::where('uin', $uin)->max('version');
 
         $article = null;
         if (is_null($version)) {
@@ -164,18 +165,69 @@ class ArticleController extends Controller
 
     public function search(Request $request)
     {
-        $uin = trim($request->input('uin', ''));
-        $owner = trim($request->input('owner', ''));
-        $subject = trim($request->input('subject', ''));
-        $body = trim($request->input('body', ''));
+        $date1 = intval(trim($request->input('date1', '')));
+        $date2 = intval(trim($request->input('date2', '')));
+
+        self::validateQuery($request->input('query'));
+        $query = trim($request->input('query', ''));
+        $query = preg_replace('/\s+/', ' ', $query);
+
+        // Разбиваем запрос на фильтры author:
+        $queryArr = explode(' ', $query);
+        $wordsToBeSearched = [];
+        $uin = '';
+        $owner = '';
+        $subject = '';
+
+        foreach ($queryArr as $word) {
+            if (
+                strlen($word) > strlen('author:') &&
+                substr($word, 0, strlen('author:')) == 'author:'
+            ) {
+                $owner = substr($word, strlen('author:'));
+
+            } elseif (
+                strlen($word) > strlen('subject:') &&
+                substr($word, 0, strlen('subject:')) == 'subject:'
+            ) {
+                $subject = substr($word, strlen('subject:'));
+
+            } elseif (
+                strlen($word) > strlen('uin:') &&
+                substr($word, 0, strlen('uin:')) == 'uin:'
+            ) {
+                $uin = substr($word, strlen('uin:'));
+
+            } else {
+                $wordsToBeSearched[] = $word;
+            }
+        }
 
         [$idUsers, $idNamesUsers] = $this->getNamesUsers($owner);
+
+        //DATE
+        $dayStartDate = 1;
+        $dayEndDate = 9999999999;
+
+        if ($date1 != '' && $date2 != '') {
+            $dayStartDate = DateTime::createFromFormat('U', min($date1, $date2))->setTime(0, 0, 0)->format('U');
+            $dayEndDate = DateTime::createFromFormat('U', max($date1, $date2))->setTime(23, 59, 59)->format('U');
+        }
 
 //        DB::enableQueryLog();
 
         $items = DB::table('articles')
+            ->whereBetween('updated_at', [$dayStartDate, $dayEndDate])
             ->where('uin', 'like', '%' . $uin . '%')
-            ->where('body', 'like', '%' . $body . '%')
+            ->where(function ($query) use ($wordsToBeSearched) {
+
+                if (count($wordsToBeSearched) > 0) {
+                    for ($i = 0; $i < count($wordsToBeSearched); $i++) {
+                        $query->where('body', 'like', '%' . $wordsToBeSearched[$i] . '%');
+                    }
+                }
+
+            })
             ->where('subject', 'like', '%' . $subject . '%')
             ->whereIn('owner', $idUsers)
             ->select(DB::raw('

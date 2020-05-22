@@ -93,6 +93,8 @@ class FeedbackController extends Controller
             return '5.8';
         } elseif ($e instanceof \App\Exceptions\Article\Validation\Version) {
             return '5.9';
+        } elseif ($e instanceof \App\Exceptions\Article\Validation\Query) {
+            return '5.10';
 
             // Tag
         } elseif ($e instanceof \App\Exceptions\Tag\Validation\Id) {

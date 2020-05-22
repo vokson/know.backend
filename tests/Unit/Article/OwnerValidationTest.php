@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Article;
 
-use App\Exceptions\Article\Validation\Owner;
+use App\Exceptions\Article\Validation\Query;
 use App\Http\Controllers\ArticleController;
 use PHPUnit\Framework\TestCase;
 
@@ -33,21 +33,21 @@ class OwnerValidationTest extends TestCase
     public function test_2()
     {
         $f = self::$functionName;
-        $this->expectException(Owner::class);
+        $this->expectException(Query::class);
         self::$controller->$f(null);
     }
 
     public function test_3()
     {
         $f = self::$functionName;
-        $this->expectException(Owner::class);
+        $this->expectException(Query::class);
         self::$controller->$f(1);
     }
 
     public function test_4()
     {
         $f = self::$functionName;
-        $this->expectException(Owner::class);
+        $this->expectException(Query::class);
         self::$controller->$f('');
     }
 

@@ -4,7 +4,7 @@
 namespace App\Exceptions\Article\Validation;
 
 
-class Owner extends \Exception
+class Query extends \Exception
 {
 
 }
