@@ -16,6 +16,7 @@ use App\Exceptions\Article\Delete\NullArticle as DeleteNullArticle;
 use App\Http\Controllers\FeedbackController as Feedback;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use App\Tag;
 
 class ArticleController extends Controller
 {
@@ -65,6 +66,16 @@ class ArticleController extends Controller
         return true;
     }
 
+    private function strToLowerCase($s)
+    {
+        // Преобразуем спец символы HTML обратно
+        $r = html_entity_decode($s, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+        // Удаляем все тэги html
+        $r = strip_tags($r);
+        // Преобразование строки к нижнему регистру
+        return mb_strtolower($r, 'UTF-8');
+    }
+
     public function set(Request $request)
     {
         self::validateUin($request->input('uin'));
@@ -95,6 +106,8 @@ class ArticleController extends Controller
         $article->version = $version;
         $article->subject = $request->input('subject');
         $article->body = $request->input('body');
+        $article->lowered_subject = $this->strToLowerCase($request->input('subject'));
+        $article->lowered_body = $this->strToLowerCase($request->input('body'));
         $article->user_id = AuthController::id($request);
         $article->save();
 
@@ -160,7 +173,15 @@ class ArticleController extends Controller
 
         Article::where('uin', $uin)->where('version', $version)->delete();
 
-        return Feedback::success();
+        if ($version == 1) {
+            Tag::where('article_id', $uin)->delete();
+        }
+
+
+        return Feedback::success([
+            'uin' => $article->uin,
+            'version' => $article->version
+        ]);
     }
 
     public function search(Request $request)
@@ -173,7 +194,7 @@ class ArticleController extends Controller
         $query = preg_replace('/\s+/', ' ', $query);
 
         // Разбиваем запрос на фильтры author:
-        $queryArr = explode(' ', $query);
+        $queryArr = explode(' ', mb_strtolower($query, 'UTF-8'));
         $wordsToBeSearched = [];
         $uin = '';
         $owner = '';
@@ -223,13 +244,14 @@ class ArticleController extends Controller
 
                 if (count($wordsToBeSearched) > 0) {
                     for ($i = 0; $i < count($wordsToBeSearched); $i++) {
-                        $query->where('body', 'like', '%' . $wordsToBeSearched[$i] . '%');
+                        $query->where('lowered_body', 'like', '%' . $wordsToBeSearched[$i] . '%');
                     }
                 }
 
             })
-            ->where('subject', 'like', '%' . $subject . '%')
+            ->where('lowered_subject', 'like', '%' . $subject . '%')
             ->whereIn('owner', $idUsers)
+//            ->leftJoin('tags', 'articles.uin', '=', 'tags.article_id')
             ->select(DB::raw('
                 "uin",
                 "is_attachment_exist",
@@ -237,6 +259,7 @@ class ArticleController extends Controller
                 "created_at" as "date",
                 "subject", 
                 "body",
+                "lowered_body",
                 max("version") as "version"
              '))
             ->groupBy('uin')

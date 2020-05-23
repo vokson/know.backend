@@ -127,6 +127,53 @@ class TagController extends Controller
 
     }
 
+    public function getForMany(Request $request)
+    {
+
+        $ids = $request->input('id_list', null);
+        self::validateItems($ids);
+
+//        function makeInt(&$item)
+//        {
+//            $item = (int)$item;
+//        }
+//
+//        array_walk($ids, 'makeInt');
+
+        foreach ($ids as &$id) {
+            $id = (int)$id;
+            self::validateId($id);
+        }
+
+        $tags = Tag::whereIn('article_id', $ids)->get()->toArray();
+
+        $tagByIdArray = [];
+        $tagList = [];
+
+        foreach ($tags as $tag) {
+            $id = $tag['article_id'];
+            $name = $tag['name'];
+            $tagList[$name] = true;
+
+            if (key_exists($id, $tagByIdArray)) {
+                $tagByIdArray[$id][] = $name;
+
+            } else {
+                $tagByIdArray[$id] = [$name];
+            }
+
+        }
+
+        $tagList = array_keys($tagList);
+        sort($tagList);
+
+        return Feedback::success([
+            'list_by_id' => $tagByIdArray,
+            'list_of_names' => $tagList
+        ]);
+
+    }
+
     public function set(Request $request)
     {
         self::validateId($request->input('id'));

@@ -19,6 +19,8 @@ class CreateArticlesTable extends Migration
             $table->integer('version');
             $table->string('subject');
             $table->string('body');
+            $table->string('lowered_subject');
+            $table->string('lowered_body');
 
             $table->integer('user_id')
                 ->references('id')->on('users')->onDelete('restrict');
