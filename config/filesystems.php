@@ -81,4 +81,8 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    /* Directory where zip archives are stored */
+    'archiveStoragePath' => storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'zip'),
+
+
 ];

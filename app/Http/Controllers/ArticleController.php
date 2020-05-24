@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\ArticleFile;
 use App\Exceptions\Article\Delete\VersionIsNotLatest;
 use App\Exceptions\Article\Set\MissedArticleWithId;
+use App\Exceptions\ArticleFile\Delete\AttachedFilesExists;
 use Illuminate\Http\Request;
 use App\Exceptions\Article\Validation\Uin;
 use App\Exceptions\Article\Validation\Subject;
@@ -176,6 +178,10 @@ class ArticleController extends Controller
 
         throw_if(is_null($article), new DeleteNullArticle());
         throw_if($version != Article::where('uin', $uin)->max('version'), new VersionIsNotLatest());
+        throw_if(
+            ArticleFile::where('article_id', $article->uin)->count() > 0 && $version == 1,
+            new AttachedFilesExists()
+        );
 
         Article::where('uin', $uin)->where('version', $version)->delete();
 
@@ -306,6 +312,10 @@ class ArticleController extends Controller
         });
 
         return [$idUsers, array_combine($idUsers->toArray(), $namesUsers->toArray())];
+    }
+
+    public static function setAttachmentStatus($article_id, $status) {
+        Article::where('uin', $article_id)->update(['is_attachment_exist' => $status]);
     }
 
 

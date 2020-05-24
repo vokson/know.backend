@@ -57,3 +57,5 @@ Route::post('/service/database/backup', 'ServiceController@getDatabaseBackup');
 Route::post('/article/file/get', 'ArticleFileController@get');
 Route::post('/article/file/upload', 'ArticleFileController@upload');
 Route::post('/article/file/download', 'ArticleFileController@download');
+Route::post('/article/file/download/all', 'ArticleFileController@downloadAll');
+Route::post('/article/file/delete', 'ArticleFileController@delete');

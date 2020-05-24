@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use App\ArticleFile;
+use App\Exceptions\ArticleFile\Delete\DeletionError;
 use App\Exceptions\ArticleFile\Download\MissedFileInDatabase;
 use App\Exceptions\ArticleFile\Download\MissedFileInStorage;
 use App\Exceptions\ArticleFile\Upload\FileCanNotBeStored;
@@ -15,7 +16,6 @@ use App\Exceptions\ArticleFile\Validation\Uin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FeedbackController As Feedback;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ZipArchiveController;
 
 class ArticleFileController extends Controller
@@ -66,12 +66,6 @@ class ArticleFileController extends Controller
             DIRECTORY_SEPARATOR .
             $article_id;
 
-//        return Feedback::success([
-//            'way' => $way,
-//            'uin' => $uin,
-//            'article_id' => $article_id
-//        ]);
-
         try {
             $path = Storage::putFile($way, $request->file('file'));
         } catch (\Exception $e) {
@@ -89,7 +83,7 @@ class ArticleFileController extends Controller
         $file->save();
 
         // Изменяем is_attachment_exist для записи
-        Article::where('uin', $article_id)->update(['is_attachment_exist' => true]);
+        ArticleController::setAttachmentStatus($article_id, true);
 
         return Feedback::success([
             'id' => $file->id,
@@ -127,48 +121,36 @@ class ArticleFileController extends Controller
         ]);
     }
 
-//    public function delete(Request $request)
-//    {
-//        $file_id = null;
-//        if (Input::has('id')) {
-//
-//            if (!ArticleFile::where('id', '=', Input::get('id'))->exists()) {
-//                return Feedback::getFeedback(604);
-//            } else {
-//                $file_id = $request->input('id');
-//            }
-//        }
-//
-//        $file = ArticleFile::find($file_id);
-//
-//        try {
-//
-//            Storage::delete($file->server_name);
-//
-//        } catch (QueryException $e) {
-//
-//            return Feedback::getFeedback(603);
-//        }
-//
-//        $uin = $file->uin;
-//        $log_id = $file->log;
-//
-//        // Удаляем файл
-//        $file->delete();
-//
-//        // Проверяем есть ли еще файлы у данной записи
-//        // Если нет, изменяем is_attachment_exist для записи
-//        if (ArticleFile::where('log', $log_id)->count() <= 0) {
-//            $log = Log::find($log_id);
-//            $log->is_attachment_exist = false;
-//            $log->save();
-//        }
-//
-//        return Feedback::getFeedback(0, [
-////            'log_id' => $log_id,
-//            'uin' => $uin
-//        ]);
-//    }
+    public function delete(Request $request)
+    {
+        $file_id = $request->input('file_id', null);
+        self::validateId($file_id);
+
+        $file = ArticleFile::find($file_id);
+        throw_if(is_null($file), new MissedFileInDatabase());
+
+        try {
+            Storage::delete($file->server_name);
+        } catch (\Exception $e) {
+            throw new DeletionError();
+        }
+
+        $uin = $file->uin;
+        $article_id = $file->article_id;
+
+        // Удаляем файл
+        $file->delete();
+
+        // Проверяем есть ли еще файлы у данной записи
+        // Если нет, изменяем is_attachment_exist для записи
+        if (ArticleFile::where('article_id', $article_id)->count() <= 0) {
+            ArticleController::setAttachmentStatus($article_id, false);
+        }
+
+        return Feedback::success([
+            'uin' => $uin
+        ]);
+    }
 
     public function download(Request $request)
     {
@@ -190,20 +172,22 @@ class ArticleFileController extends Controller
         return response()->download($path, "", $headers);
     }
 
-//    public function downloadAll(Request $request)
-//    {
-//        $log_id = intval(Input::get('id', 0));
-//        $files = ArticleFile::where('log', $log_id)->get();
-//
-//        $filesForZipArchive = [];
-//        foreach ($files as $file) {
-//            $filesForZipArchive[] = [
-//                'absolute_path' => storage_path("app/" . $file->server_name),
-//                'filename' => $file->original_name
-//            ];
-//        }
-//
-//        return ZipArchiveController::download($filesForZipArchive);
-//    }
+    public function downloadAll(Request $request)
+    {
+        $article_id = $request->input('article_id', null);
+        self::validateId($article_id);
+
+        $files = ArticleFile::where('article_id', $article_id)->get();
+
+        $filesForZipArchive = [];
+        foreach ($files as $file) {
+            $filesForZipArchive[] = [
+                'absolute_path' => storage_path("app" . DIRECTORY_SEPARATOR . $file->server_name),
+                'filename' => $file->original_name
+            ];
+        }
+
+        return ZipArchiveController::download($filesForZipArchive);
+    }
 
 }

@@ -114,14 +114,14 @@ class TagController extends Controller
 
     public function get(Request $request)
     {
-        self::validateId($request->input('id'));
-        $id = (int)($request->input('id'));
+        self::validateId($request->input('article_id'));
+        $id = (int)($request->input('article_id'));
 
         $tags = Tag::where('article_id', $id)->orderBy('name', 'asc')->get()->toArray();
         $tags = array_column($tags, 'name');
 
         return Feedback::success([
-            'id' => $id,
+            'article_id' => $id,
             'items' => $tags,
         ]);
 
@@ -132,13 +132,6 @@ class TagController extends Controller
 
         $ids = $request->input('id_list', null);
         self::validateItems($ids);
-
-//        function makeInt(&$item)
-//        {
-//            $item = (int)$item;
-//        }
-//
-//        array_walk($ids, 'makeInt');
 
         foreach ($ids as &$id) {
             $id = (int)$id;
@@ -176,10 +169,10 @@ class TagController extends Controller
 
     public function set(Request $request)
     {
-        self::validateId($request->input('id'));
-        $id = (int)($request->input('id'));
+        self::validateId($request->input('article_id'));
+        $article_id = (int)($request->input('article_id'));
 
-        throw_if(Article::where('id', $id)->count() == 0, new MissedArticleWithId());
+        throw_if(Article::where('uin', $article_id)->count() == 0, new MissedArticleWithId());
 
         $names = $request->input('items', null);
         self::validateItems($names);
@@ -189,17 +182,17 @@ class TagController extends Controller
             throw_if(Tag::where('name', $name)->whereNull('article_id')->count() == 0, new NameHasNotCreated());
         }
 
-        Tag::where('article_id', $id)->delete();
+        Tag::where('article_id', $article_id)->delete();
 
         foreach ($names as $name) {
             $tag = new Tag();
             $tag->name = $name;
-            $tag->article_id = $id;
+            $tag->article_id = $article_id;
             $tag->save();
         }
 
         return Feedback::success([
-            'id' => $id
+            'article_id' => $article_id
         ]);
     }
 

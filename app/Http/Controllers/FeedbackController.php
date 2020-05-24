@@ -35,7 +35,7 @@ class FeedbackController extends Controller
         } elseif ($e instanceof \App\Exceptions\User\Permission\RouteAccessDenied) {
             return '1.5';
 
-        // User
+            // User
         } elseif ($e instanceof \App\Exceptions\User\Validation\Active) {
             return '2.1';
         } elseif ($e instanceof \App\Exceptions\User\Validation\Email) {
@@ -54,7 +54,7 @@ class FeedbackController extends Controller
             return '2.8';
 
 
-         // Setting
+            // Setting
         } elseif ($e instanceof \App\Exceptions\Setting\Validation\Items) {
             return '3.1';
         } elseif ($e instanceof \App\Exceptions\Setting\Validation\Name) {
@@ -95,6 +95,8 @@ class FeedbackController extends Controller
             return '5.9';
         } elseif ($e instanceof \App\Exceptions\Article\Validation\Query) {
             return '5.10';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Delete\AttachedFilesExists) {
+            return '5.11';
 
             // Tag
         } elseif ($e instanceof \App\Exceptions\Tag\Validation\Id) {
@@ -125,8 +127,15 @@ class FeedbackController extends Controller
             return '7.7';
         } elseif ($e instanceof \App\Exceptions\ArticleFile\Download\MissedFileInStorage) {
             return '7.8';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Delete\DeletionError) {
+            return '7.9';
 
-        // DEFAULT
+
+            // Zip
+        } elseif ($e instanceof \App\Exceptions\Zip\Create\CanNotBeCreated) {
+            return '8.1';
+
+            // DEFAULT
         } else {
             return '0.0';
         }
