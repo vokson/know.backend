@@ -108,6 +108,24 @@ class FeedbackController extends Controller
         } elseif ($e instanceof \App\Exceptions\Tag\Validation\Items) {
             return '6.5';
 
+            // Article File
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Validation\Id) {
+            return '7.1';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Validation\Uin) {
+            return '7.2';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Upload\FileCanNotBeStored) {
+            return '7.3';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Upload\InvalidFile) {
+            return '7.4';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Upload\MissedFile) {
+            return '7.5';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Upload\NullArticle) {
+            return '7.6';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Download\MissedFileInDatabase) {
+            return '7.7';
+        } elseif ($e instanceof \App\Exceptions\ArticleFile\Download\MissedFileInStorage) {
+            return '7.8';
+
         // DEFAULT
         } else {
             return '0.0';

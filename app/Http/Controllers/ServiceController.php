@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Log;
 use Carbon\Carbon;
-use App\UploadedFile;
+use App\ArticleFile;
 
 class ServiceController extends Controller
 {

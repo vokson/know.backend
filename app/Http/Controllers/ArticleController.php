@@ -88,12 +88,17 @@ class ArticleController extends Controller
         throw_if(!is_null($uin) && is_null(Article::where('uin', $uin)->first()), new MissedArticleWithId());
 
         $version = 1;
+        $is_attachment_exist = false;
 
         if (is_null($uin)) {
             $max = Article::max('uin');
             $uin = (is_null($max)) ? 1 : $max + 1;
         } else {
-            $version = intval(Article::where('uin', $uin)->max('version')) + 1;
+            $version = intval(Article::where('uin', $uin)->max('version'));
+            $article = Article::where('uin', $uin)->where('version', $version)->first();
+
+            $is_attachment_exist = $article->is_attachment_exist;
+            $version++;
         }
 
 //        return Feedback::success([
@@ -109,6 +114,7 @@ class ArticleController extends Controller
         $article->lowered_subject = $this->strToLowerCase($request->input('subject'));
         $article->lowered_body = $this->strToLowerCase($request->input('body'));
         $article->user_id = AuthController::id($request);
+        $article->is_attachment_exist = $is_attachment_exist;
         $article->save();
 
         return Feedback::success([

@@ -52,3 +52,8 @@ Route::post('/tag/set', 'TagController@set');
 
 //SERVICE
 Route::post('/service/database/backup', 'ServiceController@getDatabaseBackup');
+
+// ARTICLE FILE
+Route::post('/article/file/get', 'ArticleFileController@get');
+Route::post('/article/file/upload', 'ArticleFileController@upload');
+Route::post('/article/file/download', 'ArticleFileController@download');
