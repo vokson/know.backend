@@ -63,14 +63,14 @@ class AuthController extends Controller
 
         $token = bin2hex(random_bytes(30));
         $user->access_token = $token;
-        return Feedback::success([
-            'name' => $user->name,
-            'email' => $email,
-            'password' => $password,
-            'user' => get_current_user(),
-            'whoami' => trim(shell_exec('whoami'))
-        ]);
-        
+//        return Feedback::success([
+//            'name' => $user->name,
+//            'email' => $email,
+//            'password' => $password,
+//            'user' => get_current_user(),
+//            'whoami' => trim(shell_exec('whoami'))
+//        ]);
+
         $user->save();
 
 
