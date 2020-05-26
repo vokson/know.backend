@@ -52,16 +52,18 @@ class AuthController extends Controller
 //        ]);
 
         $user = User::where('email', $email)->where('password', $password)->first();
-        $user->save();
 
-//        return Feedback::success([
-//            'name' => $user->name,
-//            'email' => $email,
-//            'password' => $password
-//        ]);
+
 
         throw_if(is_null($user), new InvalidLoginPassword());
         throw_if(!$user->active, new UserSwitchedOff());
+        
+        return Feedback::success([
+            'name' => $user->name,
+            'email' => $email,
+            'password' => $password
+        ]);
+
 
         $token = bin2hex(random_bytes(30));
         $user->access_token = $token;
