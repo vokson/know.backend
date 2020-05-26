@@ -57,17 +57,19 @@ class AuthController extends Controller
 
         throw_if(is_null($user), new InvalidLoginPassword());
         throw_if(!$user->active, new UserSwitchedOff());
-        
-        return Feedback::success([
-            'name' => $user->name,
-            'email' => $email,
-            'password' => $password
-        ]);
+
+
 
 
         $token = bin2hex(random_bytes(30));
         $user->access_token = $token;
         $user->save();
+
+        return Feedback::success([
+            'name' => $user->name,
+            'email' => $email,
+            'password' => $password
+        ]);
 
         return Feedback::success([
             'access_token' => $user->access_token,
