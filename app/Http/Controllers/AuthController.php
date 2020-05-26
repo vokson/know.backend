@@ -66,8 +66,11 @@ class AuthController extends Controller
         return Feedback::success([
             'name' => $user->name,
             'email' => $email,
-            'password' => $password
+            'password' => $password,
+            'user' => get_current_user(),
+            'whoami' => trim(shell_exec('whoami'))
         ]);
+        
         $user->save();
 
 
