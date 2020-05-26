@@ -40,16 +40,16 @@ class AuthController extends Controller
         return $user->surname . ' ' . $user->name;
     }
 
-    public function test(Request $request) {
-
-        $user = User::where('email', 'noskov_as@niik.ru')->where('password', '1234')->first();
-
-        return Feedback::success([
-            'user' => $user->name,
-            'driver' => config('database.default'),
-            'database' => config('database.connections.sqlite.database')
-        ]);
-    }
+//    public function test(Request $request) {
+//
+//        $user = User::where('email', 'noskov_as@niik.ru')->where('password', '1234')->first();
+//
+//        return Feedback::success([
+//            'user' => $user->name,
+//            'driver' => config('database.default'),
+//            'database' => config('database.connections.sqlite.database')
+//        ]);
+//    }
 
 
     public function login(Request $request)
@@ -57,6 +57,11 @@ class AuthController extends Controller
 
         $email = $request->input('email', '');
         $password = $request->input('password', '');
+
+        return Feedback::success([
+            'email' => $email,
+            'password' => $password
+        ]);
 
         $user = User::where('email', $email)->where('password', $password)->first();
         throw_if(is_null($user), new InvalidLoginPassword());
