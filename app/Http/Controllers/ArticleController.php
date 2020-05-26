@@ -262,7 +262,7 @@ class ArticleController extends Controller
 
             })
             ->where('lowered_subject', 'like', '%' . $subject . '%')
-            ->whereIn('owner', $idUsers)
+            ->whereIn('user_id', $idUsers)
 //            ->leftJoin('tags', 'articles.uin', '=', 'tags.article_id')
             ->select(DB::raw('
                 "uin",
