@@ -18,6 +18,8 @@ class ZipArchiveController extends Controller
 
         $zipPath = config('filesystems.archiveStoragePath') . DIRECTORY_SEPARATOR . $archiveName;
 
+        return $zipPath;
+
         set_time_limit(Settings::take('ARCHIVE_CREATION_TIME'));
 
         throw_if(self::createArchive($fileForZipArchive, $zipPath) === FALSE, new CanNotBeCreated());

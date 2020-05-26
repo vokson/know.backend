@@ -45,35 +45,14 @@ class AuthController extends Controller
 
         $email = $request->input('email', '');
         $password = $request->input('password', '');
-//
-//        return Feedback::success([
-//            'email' => $email,
-//            'password' => $password
-//        ]);
-
         $user = User::where('email', $email)->where('password', $password)->first();
-
-
 
         throw_if(is_null($user), new InvalidLoginPassword());
         throw_if(!$user->active, new UserSwitchedOff());
 
-
-
-
         $token = bin2hex(random_bytes(30));
         $user->access_token = $token;
-//        return Feedback::success([
-//            'name' => $user->name,
-//            'email' => $email,
-//            'password' => $password,
-//            'user' => get_current_user(),
-//            'whoami' => trim(shell_exec('whoami'))
-//        ]);
-
         $user->save();
-
-
 
         return Feedback::success([
             'access_token' => $user->access_token,
