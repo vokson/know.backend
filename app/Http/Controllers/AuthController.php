@@ -54,11 +54,11 @@ class AuthController extends Controller
         $user = User::where('email', $email)->where('password', $password)->first();
         $user->save();
 
-        return Feedback::success([
-            'name' => $user->name,
-            'email' => $email,
-            'password' => $password
-        ]);
+//        return Feedback::success([
+//            'name' => $user->name,
+//            'email' => $email,
+//            'password' => $password
+//        ]);
 
         throw_if(is_null($user), new InvalidLoginPassword());
         throw_if(!$user->active, new UserSwitchedOff());
