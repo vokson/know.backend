@@ -41,10 +41,11 @@ class AuthController extends Controller
     }
 
     public function test(Request $request) {
-        
+
         $user = User::where('email', 'noskov_as@niik.ru')->where('password', '1234')->first();
 
         return Feedback::success([
+            'user' => $user->name,
             'driver' => config('database.default'),
             'database' => config('database.connections.sqlite.database')
         ]);
