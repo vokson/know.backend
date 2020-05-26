@@ -52,6 +52,7 @@ class AuthController extends Controller
 //        ]);
 
         $user = User::where('email', $email)->where('password', $password)->first();
+        $user->save();
 
         return Feedback::success([
             'name' => $user->name,
