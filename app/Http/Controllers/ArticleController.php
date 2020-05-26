@@ -205,8 +205,8 @@ class ArticleController extends Controller
         $query = trim($request->input('query', ''));
         $query = preg_replace('/\s+/', ' ', $query);
 
-        // Разбиваем запрос на фильтры author:
-        $queryArr = explode(' ', mb_strtolower($query, 'UTF-8'));
+        // Разбиваем запрос на фильтры
+        $queryArr = explode(' ', $query);
         $wordsToBeSearched = [];
         $uin = '';
         $owner = '';
@@ -218,21 +218,23 @@ class ArticleController extends Controller
                 substr($word, 0, strlen('author:')) == 'author:'
             ) {
                 $owner = substr($word, strlen('author:'));
+                // Оставляем поиск регистрозависимым
 
             } elseif (
                 strlen($word) > strlen('subject:') &&
                 substr($word, 0, strlen('subject:')) == 'subject:'
             ) {
                 $subject = substr($word, strlen('subject:'));
+                $subject =  mb_strtolower($subject, 'UTF-8');
 
             } elseif (
                 strlen($word) > strlen('uin:') &&
                 substr($word, 0, strlen('uin:')) == 'uin:'
             ) {
                 $uin = substr($word, strlen('uin:'));
-
+                $uin =  mb_strtolower($uin, 'UTF-8');
             } else {
-                $wordsToBeSearched[] = $word;
+                $wordsToBeSearched[] = mb_strtolower($word, 'UTF-8');;
             }
         }
 
@@ -247,13 +249,13 @@ class ArticleController extends Controller
             $dayEndDate = DateTime::createFromFormat('U', max($date1, $date2))->setTime(23, 59, 59)->format('U');
         }
 
-        return Feedback::success([
-            'idUsers' => $idUsers,
-            'idNamesUsers' => $idNamesUsers,
-            'author' => $owner
-        ]);
-
-        DB::enableQueryLog();
+//        return Feedback::success([
+//            'idUsers' => $idUsers,
+//            'idNamesUsers' => $idNamesUsers,
+//            'author' => $owner
+//        ]);
+//
+//        DB::enableQueryLog();
 
         $items = DB::table('articles')
             ->whereBetween('updated_at', [$dayStartDate, $dayEndDate])
@@ -284,7 +286,7 @@ class ArticleController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        return DB::getQueryLog();
+//        return DB::getQueryLog();
 
         // Подменяем uin на значения полей из других таблиц
         $items->transform(function ($item, $key) use ($idNamesUsers) {
