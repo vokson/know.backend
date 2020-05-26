@@ -247,6 +247,12 @@ class ArticleController extends Controller
             $dayEndDate = DateTime::createFromFormat('U', max($date1, $date2))->setTime(23, 59, 59)->format('U');
         }
 
+        return Feedback::success([
+            'idUsers' => $idUsers,
+            'idNamesUsers' => $idNamesUsers,
+            'author' => $owner
+        ]);
+
         DB::enableQueryLog();
 
         $items = DB::table('articles')
