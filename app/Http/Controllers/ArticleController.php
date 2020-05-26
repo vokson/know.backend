@@ -247,7 +247,7 @@ class ArticleController extends Controller
             $dayEndDate = DateTime::createFromFormat('U', max($date1, $date2))->setTime(23, 59, 59)->format('U');
         }
 
-//        DB::enableQueryLog();
+        DB::enableQueryLog();
 
         $items = DB::table('articles')
             ->whereBetween('updated_at', [$dayStartDate, $dayEndDate])
@@ -278,7 +278,7 @@ class ArticleController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-//        dd(DB::getQueryLog());
+        dd(DB::getQueryLog());
 
         // Подменяем uin на значения полей из других таблиц
         $items->transform(function ($item, $key) use ($idNamesUsers) {
