@@ -278,7 +278,7 @@ class ArticleController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        dd(DB::getQueryLog());
+        return DB::getQueryLog();
 
         // Подменяем uin на значения полей из других таблиц
         $items->transform(function ($item, $key) use ($idNamesUsers) {
