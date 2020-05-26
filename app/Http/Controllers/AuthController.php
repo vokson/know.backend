@@ -45,11 +45,11 @@ class AuthController extends Controller
 
         $email = $request->input('email', '');
         $password = $request->input('password', '');
-
-        return Feedback::success([
-            'email' => $email,
-            'password' => $password
-        ]);
+//
+//        return Feedback::success([
+//            'email' => $email,
+//            'password' => $password
+//        ]);
 
         $user = User::where('email', $email)->where('password', $password)->first();
 
