@@ -211,6 +211,7 @@ class ArticleController extends Controller
         $uin = '';
         $owner = '';
         $subject = '';
+        $limit = 0;
 
         foreach ($queryArr as $word) {
             if (
@@ -225,14 +226,20 @@ class ArticleController extends Controller
                 substr($word, 0, strlen('subject:')) == 'subject:'
             ) {
                 $subject = substr($word, strlen('subject:'));
-                $subject =  mb_strtolower($subject, 'UTF-8');
+                $subject = mb_strtolower($subject, 'UTF-8');
 
             } elseif (
                 strlen($word) > strlen('uin:') &&
                 substr($word, 0, strlen('uin:')) == 'uin:'
             ) {
                 $uin = substr($word, strlen('uin:'));
-                $uin =  mb_strtolower($uin, 'UTF-8');
+                $uin = mb_strtolower($uin, 'UTF-8');
+
+            } elseif (
+                strlen($word) > strlen('limit:') &&
+                substr($word, 0, strlen('limit:')) == 'limit:'
+            ) {
+                $limit = intval(substr($word, strlen('limit:')));
             } else {
                 $wordsToBeSearched[] = mb_strtolower($word, 'UTF-8');;
             }
@@ -282,9 +289,13 @@ class ArticleController extends Controller
                 "lowered_body",
                 max("version") as "version"
              '))
-            ->groupBy('uin')
-            ->orderBy('date', 'desc')
-            ->get();
+            ->groupBy('uin');
+
+        if ($limit > 0) {
+            $items = $items->take($limit);
+        }
+
+        $items = $items->orderBy('date', 'desc')->get();
 
 //        return DB::getQueryLog();
 
@@ -322,7 +333,8 @@ class ArticleController extends Controller
         return [$idUsers, array_combine($idUsers->toArray(), $namesUsers->toArray())];
     }
 
-    public static function setAttachmentStatus($article_id, $status) {
+    public static function setAttachmentStatus($article_id, $status)
+    {
         Article::where('uin', $article_id)->update(['is_attachment_exist' => $status]);
     }
 
