@@ -20,6 +20,13 @@ class CheckPermissionForRoute
     {
         $uri = str_replace('api/', '', $request->path());
 
+        if (
+            $uri === 'user/login' ||
+            $uri === 'user/login/token'
+        ) {
+            return $next($request);
+        }
+
         $token = $request->input('access_token', null);
 
         if (is_null($token)) {
