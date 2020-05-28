@@ -23,7 +23,7 @@ class CheckPermissionForRoute
         $token = $request->input('access_token', null);
 
         if (is_null($token)) {
-            $user = User::where('email', 'guest@guest')->first();
+            $user = User::where('email', 'guest@mail.com')->first();
         } else {
             $id = AuthController::currentUsedId($token);
             $user = User::find($id);
