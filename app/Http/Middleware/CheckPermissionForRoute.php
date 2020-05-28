@@ -20,13 +20,14 @@ class CheckPermissionForRoute
     {
         $uri = str_replace('api/', '', $request->path());
 
-        if ($uri === 'user/login' || $uri === 'user/login/token') {
-            return $next($request);
-        }
+        $token = $request->input('access_token', null);
 
-        $token = $request->input('access_token', '');
-        $id = AuthController::currentUsedId($token);
-        $user = User::find($id);
+        if (is_null($token)) {
+            $user = User::where('email', 'guest@guest')->first();
+        } else {
+            $id = AuthController::currentUsedId($token);
+            $user = User::find($id);
+        }
 
         throw_if(!$user->mayDo($uri), new RouteAccessDenied());
 
