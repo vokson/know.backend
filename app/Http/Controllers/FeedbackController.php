@@ -17,7 +17,6 @@ class FeedbackController extends Controller
         $feedback['success'] = 0;
         $feedback['error'] = self::getCodeByException($e);
         $feedback['description'] = $e->getMessage();
-//        $feedback['notifications'] = self::getNotificationsByException($e);
         return json_encode($feedback);
     }
 
@@ -142,13 +141,4 @@ class FeedbackController extends Controller
 
     }
 
-//    /**
-//     * @param \Exception $e
-//     * @return array
-////     */
-//    private static function getNotificationsByException(\Exception $e)
-//    {
-//        if ($e instanceof UserDecisionRequired) return Model::getErrors();
-//        return [];
-//    }
 }

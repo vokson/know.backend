@@ -9,23 +9,10 @@ use Closure;
 
 class CheckPermissionForRoute
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @return mixed
-     */
+
     public function handle($request, Closure $next)
     {
         $uri = str_replace('api/', '', $request->path());
-
-//        if (
-//            $uri === 'user/login' ||
-//            $uri === 'user/login/token'
-//        ) {
-//            return $next($request);
-//        }
 
         $token = $request->input('access_token', null);
 

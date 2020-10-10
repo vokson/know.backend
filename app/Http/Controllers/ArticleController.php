@@ -103,11 +103,6 @@ class ArticleController extends Controller
             $version++;
         }
 
-//        return Feedback::success([
-//            'uin' => $uin,
-//            'version' => $version
-//        ]);
-
         $article = new Article();
         $article->uin = $uin;
         $article->version = $version;
@@ -256,14 +251,6 @@ class ArticleController extends Controller
             $dayEndDate = DateTime::createFromFormat('U', max($date1, $date2))->setTime(23, 59, 59)->format('U');
         }
 
-//        return Feedback::success([
-//            'idUsers' => $idUsers,
-//            'idNamesUsers' => $idNamesUsers,
-//            'author' => $owner
-//        ]);
-//
-//        DB::enableQueryLog();
-
         $items = DB::table('articles')
             ->whereBetween('updated_at', [$dayStartDate, $dayEndDate])
             ->where('uin', 'like', '%' . $uin . '%')
@@ -278,7 +265,6 @@ class ArticleController extends Controller
             })
             ->where('lowered_subject', 'like', '%' . $subject . '%')
             ->whereIn('user_id', $idUsers)
-//            ->leftJoin('tags', 'articles.uin', '=', 'tags.article_id')
             ->select(DB::raw('
                 "uin",
                 "is_attachment_exist",
@@ -297,8 +283,6 @@ class ArticleController extends Controller
 
         $items = $items->orderBy('date', 'desc')->get();
 
-//        return DB::getQueryLog();
-
         // Подменяем uin на значения полей из других таблиц
         $items->transform(function ($item, $key) use ($idNamesUsers) {
             $item->owner = $idNamesUsers[$item->owner];
@@ -312,15 +296,11 @@ class ArticleController extends Controller
 
     private function getNamesUsers($owner)
     {
-//        DB::enableQueryLog();
-
         $users = DB::table('users')
             ->where('name', 'like', '%' . $owner . '%')
             ->orWhere('surname', 'like', '%' . $owner . '%')
             ->select('id', 'name', 'surname')
             ->get();
-
-//        dd(DB::getQueryLog());
 
         $idUsers = $users->map(function ($item) {
             return $item->id;

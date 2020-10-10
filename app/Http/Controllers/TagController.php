@@ -77,41 +77,6 @@ class TagController extends Controller
         return Feedback::success();
     }
 
-//    public function add(Request $request)
-//    {
-//        self::validateName($request->input('name'));
-//        self::validateId($request->input('id'));
-//
-//
-//        $id = (int)($request->input('id'));
-//        $name = trim($request->input('name'));
-//
-//
-//
-//        throw_if(Tag::where('name', $name)->whereNull('article_id')->count() == 0, new NameHasNotCreated());
-//        throw_if(Article::where('id', $id)->count() == 0, new MissedArticleWithId());
-//
-//        $tag = new Tag();
-//        $tag->name = $name;
-//        $tag->article_id = $id;
-//        $tag->save();
-//
-//        return Feedback::success();
-//    }
-//
-//    public function remove(Request $request)
-//    {
-//        self::validateId($request->input('id'));
-//        self::validateName($request->input('name'));
-//
-//        $id = (int) ($request->input('id'));
-//        $name = trim($request->input('name'));
-//
-//        Tag::where('name', $name)->where('article_id', $id)->delete();
-//
-//        return Feedback::success();
-//    }
-
     public function get(Request $request)
     {
         self::validateId($request->input('article_id'));
