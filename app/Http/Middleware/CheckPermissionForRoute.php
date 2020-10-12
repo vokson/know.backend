@@ -6,6 +6,7 @@ use App\Exceptions\User\Permission\RouteAccessDenied;
 use App\Http\Controllers\AuthController;
 use App\User;
 use Closure;
+use App\Exceptions\User\Login\InvalidToken;
 
 class CheckPermissionForRoute
 {
@@ -16,12 +17,14 @@ class CheckPermissionForRoute
 
         $token = $request->input('access_token', null);
 
-        if (is_null($token)) {
-            $user = User::where('email', 'guest@mail.com')->first();
-        } else {
+        try {
             $id = AuthController::currentUsedId($token);
             $user = User::find($id);
+
+        } catch (InvalidToken $e) {
+            $user = User::where('email', 'guest@mail.com')->first();
         }
+
 
         throw_if(!$user->mayDo($uri), new RouteAccessDenied());
 
