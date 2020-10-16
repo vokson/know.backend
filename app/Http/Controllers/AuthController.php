@@ -14,9 +14,10 @@ use App\Http\Controllers\SettingController As Settings;
 class AuthController extends Controller
 {
 
-    public static function currentUsedId(string $token)
+    public static function currentUsedId($token)
     {
         $user = User::where('access_token', $token)->first();
+
         throw_if(is_null($user), new InvalidToken());
 
         return $user->id;
@@ -64,7 +65,6 @@ class AuthController extends Controller
             'isDefaultPassword' =>
                 (hash('sha256', Settings::take('DEFAULT_PASSWORD')) === $user->password)
         ]);
-
 
     }
 
